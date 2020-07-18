@@ -1,6 +1,6 @@
 # Charging Station Billing
 
-Charging-Station-Billing coding challenge using Python.
+Charging-Station-Billing coding challenge using Python.  
 Request and fetch data from the given API and perform the given operations:
 1. Get JSON with Data
     ```json
