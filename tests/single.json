@@ -1,0 +1,64 @@
+{
+    "supplier_prices": [
+    {
+            "Company name": "Western Digital",
+            "Currency": [
+                "USD",
+                "$"
+            ],
+            "EVSE ID": "SI*KFR*R123*94",
+            "Identifier": "7fd39aa5-a031-4885-b41b-b64c4be6dc38",
+            "Product ID": false,
+            "has complex minute price": true,
+            "has hour day": true,
+            "has max session Fee": false,
+            "has minimum billing threshold": true,
+            "has session fee": true,
+            "has time based kwh": true,
+            "interval": "start",
+            "max_session fee": "False",
+            "min billing amount": "2.9443",
+            "min consumption": "0.8943",
+            "min duration": "0.0333",
+            "session Fee": "1.6114",
+            "time_price": [
+                {
+                    "hour from": 11,
+                    "hour to": 17.0,
+                    "kwh price": "1.8909"
+                },
+                {
+                    "hour from": 17.0,
+                    "hour to": 23.0,
+                    "kwh price": "0.058"
+                },
+                {
+                    "hour from": 23.0,
+                    "hour to": 5.0,
+                    "kwh price": "0.2236"
+                },
+                {
+                    "hour from": 5.0,
+                    "hour to": 11.0,
+                    "kwh price": "1.2771"
+                }
+            ]
+        }
+],
+    "transactions": [
+        {
+            "Charging end": "2020-06-04T03:47:52",
+            "Charging start": "2020-06-04T02:23:35",
+            "CountryCode": "CH",
+            "EVSEID": "SI*KFR*R123*94",
+            "Meter value end": "4668,519",
+            "Meter value start": "4577,383",
+            "Metering signature": "02255246",
+            "Partner product ID": false,
+            "Proveider ID": "MF-WFB",
+            "Session ID": "ed4e1757-f2dd-4320-88b1-030a804291a0",
+            "Session end": "2020-06-04T03:47:52",
+            "Session start": "2020-06-04T02:23:35",
+            "UID": "580c0b186b65ad81dfed2db955c743bb"
+        }
+        ]}
