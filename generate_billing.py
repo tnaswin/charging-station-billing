@@ -1,8 +1,9 @@
 import requests
 import json
 import logging
-import supplier_prices_model
-import transaction_model
+import supplier_prices_model as spm
+import transaction_model as tm
+import calulated_prices_model as cpm
 from configparser import ConfigParser
 
 
@@ -25,7 +26,7 @@ def parse_supplier_price(data):
     logging.info("parse_supplier_price")
     supplier_list = []
     for x in data:
-        result = supplier_prices_model.supplier_price_from_dict(x)
+        result = spm.supplier_price_from_dict(x)
         supplier_list.append(result)
     logging.info(len(supplier_list))
     return supplier_list
@@ -36,7 +37,7 @@ def parse_transaction(data):
     logging.info("parse_transaction")
     transaction_list = []
     for x in data:
-        transaction = transaction_model.transaction_from_dict(x)
+        transaction = tm.transaction_from_dict(x)
         transaction_list.append(transaction)
     logging.info(len(transaction_list))
     return transaction_list
@@ -58,9 +59,33 @@ def get_apidata():
         logging.info("Success code " + str(response.status_code))
         return response.json()
 
-def calculate_prices():
+def calculate_prices(supplier_list, transaction_list):
     """Calculate the price for the charges"""
-    pass
+    calulated_price_list = []
+    for supplier in supplier_list:
+        for transaction in transaction_list:
+            kwh_price = 0.0
+            if supplier.evse_id == transaction.evseid or supplier.product_id == transaction.partner_product_id:
+                if supplier.has_kwh_price:
+                    kwh_price = calculate_kwh(supplier, transaction)
+                    price = cpm.CalculatedPrice(0,0,kwh_price,0,
+                                                transaction.session_id,
+                                                supplier.identifier)
+                    calulated_price_list.append(price)
+                    transaction_list.remove(transaction)                
+    print(len(calulated_price_list))
+
+def calculate_kwh(supplier, transaction):
+    """Calculate the price for the charges from kwH data"""
+    charges = 0.0
+    kwH_consumed = transaction.meter_value_end - transaction.meter_value_start
+    if supplier.min_cosumed_energy and supplier.min_cosumed_energy > kwH_consumed:
+        charges += supplier.min_cosumed_energy * supplier.kwh_price
+    elif supplier.has_complex_minute_price:
+        pass
+    else:
+        charges += kwH_consumed * supplier.kwh_price
+    return charges
 
 def main():
     logging.basicConfig(level=logging.INFO)
@@ -71,6 +96,7 @@ if __name__=="__main__":
     try:
         data = get_apidata()
         supplier_list, transaction_list = parse_data(data)
+        calculate_prices(supplier_list, transaction_list)
 
     except Exception as e:
         logging.info("Exception")
