@@ -1,6 +1,7 @@
 import requests
 import json
 import logging
+from configparser import ConfigParser
 
 
 def parse_data():
@@ -26,9 +27,20 @@ def parse_transaction():
 
 def get_apidata():
     """
-       Connect to the server and get the base JSON file with all information.
+       Connect to the server and get the base JSON file with all information
+       and return the response received.
     """
-    pass
+    config = ConfigParser() 
+    config.read('config.ini')  # Read config from the file path given
+    url = config.get('auth', 'endpoint')  
+    username = config.get('auth', 'username')  
+    password = config.get('auth', 'password')
+    response = requests.get(url, auth=(username, password))
+    if response.status_code != 200:
+        raise Exception("Sorry, Error in API Call with HTTP Error :" + str(response.status_code))
+    else:
+        logging.info("Success code " + str(response.status_code))
+        return response.json()
 
 def calculate_prices():
     """Calculate the price for the charges"""
@@ -40,3 +52,9 @@ def main():
 
 if __name__=="__main__":
     main()
+    try:
+        data = get_apidata()
+
+    except Exception as e:
+        logging.info("Exception")
+        logging.error(logging.traceback.format_exc())
