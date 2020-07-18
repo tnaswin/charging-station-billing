@@ -1,6 +1,6 @@
 """
     Model class for supplier data to parse and store 
-    supplier price data from JSON response.
+    cleaned supplier price data from JSON response.
 """
 from dataclasses import dataclass
 from typing import Optional, Any, List, TypeVar, Callable, Type, cast
@@ -84,7 +84,7 @@ class TimePrice:
         hour_from = from_union([from_float, from_none], obj.get("hour from"))
         hour_to = from_union([from_float, from_none], obj.get("hour to"))
         minute_price = from_union([from_str, from_none], obj.get("minute price"))
-        kwh_price = from_union([from_str, from_none], obj.get("kwh price"))
+        kwh_price = from_union([from_float, from_none], obj.get("kwh price"))
         return TimePrice(billing_each_timeframe, hour_from, hour_to, minute_price, kwh_price)
 
     def to_dict(self) -> dict:
@@ -116,9 +116,11 @@ class SupplierPrice:
     min_duration: Optional[str] = None
     session_fee: Optional[str] = None
     kwh_price: Optional[float] = None
-    min_cosumed_energy: Optional[float] = None
+    min_consumed_energy: Optional[float] = None
     simple_minute_price: Optional[str] = None
     time_price: Optional[List[TimePrice]] = None
+    has_time_based_kwh: Optional[bool] = None
+    min_consumption: Optional[float] = None
 
     @staticmethod
     def from_dict(obj: Any) -> 'SupplierPrice':
@@ -134,16 +136,21 @@ class SupplierPrice:
         has_minimum_billing_threshold = from_union([from_bool, from_none], obj.get("has minimum billing threshold"))
         has_session_fee = from_union([from_bool, from_none], obj.get("has session fee"))
         has_kwh_price = from_union([from_bool, from_none], obj.get("has kwh price"))
+        has_time_based_kwh = from_union([from_bool, from_none], obj.get("has time based kwh"))
         interval = from_union([from_str, from_none], obj.get("interval"))
         max_session_fee = from_union([from_str, from_none], obj.get("max_session fee"))
         min_billing_amount = from_union([from_str, from_none], obj.get("min billing amount"))
         min_duration = from_union([from_str, from_none], obj.get("min duration"))
         session_fee = from_union([from_str, from_none], obj.get("session Fee"))
         kwh_price = from_union([from_float, from_none], obj.get("kwh Price"))
-        min_cosumed_energy = from_union([from_float, from_none], obj.get("min cosumed energy"))
+        min_consumed_energy = from_union([from_float, from_none], obj.get("min cosumed energy"))
         simple_minute_price = from_union([from_str, from_none], obj.get("simple minute price"))
         time_price = from_union([lambda x: from_list(TimePrice.from_dict, x), from_none], obj.get("time_price"))
-        return SupplierPrice(company_name, currency, evse_id, identifier, product_id, has_complex_minute_price, has_hour_day, has_max_session_fee, has_minimum_billing_threshold, has_session_fee, has_kwh_price, interval, max_session_fee, min_billing_amount, min_duration, session_fee, kwh_price, min_cosumed_energy, simple_minute_price, time_price)
+        min_consumption = from_union([from_float, from_none], obj.get("min consumption"))
+        return SupplierPrice(company_name, currency, evse_id, identifier, product_id, has_complex_minute_price, 
+                            has_hour_day, has_max_session_fee, has_minimum_billing_threshold, has_session_fee, 
+                            has_kwh_price, interval, max_session_fee, min_billing_amount, min_duration, session_fee, 
+                            kwh_price, min_consumed_energy, simple_minute_price, time_price, has_time_based_kwh, min_consumption)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -164,9 +171,11 @@ class SupplierPrice:
         result["min duration"] = from_union([from_str, from_none], self.min_duration)
         result["session Fee"] = from_union([from_str, from_none], self.session_fee)
         result["kwh Price"] = from_union([from_str, from_none], self.kwh_price)
-        result["min cosumed energy"] = from_union([from_str, from_none], self.min_cosumed_energy)
+        result["min cosumed energy"] = from_union([from_str, from_none], self.min_consumed_energy)
         result["simple minute price"] = from_union([from_str, from_none], self.simple_minute_price)
         result["time_price"] = from_union([lambda x: from_list(lambda x: to_class(TimePrice, x), x), from_none], self.time_price)
+        result["has time based kwh"] = from_union([from_bool, from_none], self.has_time_based_kwh)
+        result["min consumption"] = from_union([from_str, from_none], self.min_consumption)
         return result
 
 

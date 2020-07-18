@@ -1,7 +1,7 @@
 """Billing Model for CSV report"""
 
 from dataclasses import dataclass
-from typing import Any, TypeVar, Type, cast
+from typing import Any, List, TypeVar, Callable, Type, cast
 
 
 T = TypeVar("T")
@@ -20,6 +20,11 @@ def from_str(x: Any) -> str:
 def to_float(x: Any) -> float:
     assert isinstance(x, float)
     return x
+
+
+def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
+    assert isinstance(x, list)
+    return [f(y) for y in x]
 
 
 def to_class(c: Type[T], x: Any) -> dict:
@@ -58,9 +63,9 @@ class CalculatedPrice:
         return result
 
 
-def calculated_price_from_dict(s: Any) -> CalculatedPrice:
-    return CalculatedPrice.from_dict(s)
+def calculated_price_from_dict(s: Any) -> List[CalculatedPrice]:
+    return from_list(CalculatedPrice.from_dict, s)
 
 
-def calculated_price_to_dict(x: CalculatedPrice) -> Any:
-    return to_class(CalculatedPrice, x)
+def calculated_price_to_dict(x: List[CalculatedPrice]) -> Any:
+    return from_list(lambda x: to_class(CalculatedPrice, x), x)

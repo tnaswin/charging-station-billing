@@ -1,6 +1,6 @@
 """
     Model class for charges to parse and store 
-    transaction data from JSON response.
+    cleaned transaction data from JSON response.
 """
 from dataclasses import dataclass
 from typing import Optional, Any, TypeVar, Type, cast
@@ -72,7 +72,7 @@ class Transaction:
     meter_value_end: Optional[float] = None
     meter_value_start: Optional[float] = None
     partner_product_id: Optional[bool] = None
-    proveider_id: Optional[str] = None
+    provider_id: Optional[str] = None
     session_id: Optional[UUID] = None
     session_end: Optional[datetime] = None
     session_start: Optional[datetime] = None
@@ -89,16 +89,19 @@ class Transaction:
         meter_value_end = from_union([from_float, from_none], obj.get("Meter value end"))
         meter_value_start = from_union([from_float, from_none], obj.get("Meter value start"))
         partner_product_id = from_union([from_bool, from_str ,from_none], obj.get("Partner product ID"))
-        proveider_id = from_union([from_str, from_none], obj.get("Proveider ID"))
+        provider_id = from_union([from_str, from_none], obj.get("Proveider ID"))
         session_id = from_union([lambda x: UUID(x), from_none], obj.get("Session ID"))
         session_end = from_union([from_datetime, from_none], obj.get("Session end"))
         session_start = from_union([from_datetime, from_none], obj.get("Session start"))
         uid = from_union([from_str, from_none], obj.get("UID"))
-        return Transaction(metering_signature, charging_end, charging_start, country_code, evseid, meter_value_end, meter_value_start, partner_product_id, proveider_id, session_id, session_end, session_start, uid)
+        return Transaction(metering_signature, charging_end, charging_start, country_code, evseid, meter_value_end, 
+                            meter_value_start, partner_product_id, provider_id, session_id, session_end, session_start, uid)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["Metering signature"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.metering_signature)
+        result["Metering signature"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), 
+                                                   lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], 
+                                                   self.metering_signature)
         result["Charging end"] = from_union([lambda x: x.isoformat(), from_none], self.charging_end)
         result["Charging start"] = from_union([lambda x: x.isoformat(), from_none], self.charging_start)
         result["CountryCode"] = from_union([from_str, from_none], self.country_code)
@@ -106,7 +109,7 @@ class Transaction:
         result["Meter value end"] = from_union([from_str, from_none], self.meter_value_end)
         result["Meter value start"] = from_union([from_str, from_none], self.meter_value_start)
         result["Partner product ID"] = from_union([from_bool, from_none], self.partner_product_id)
-        result["Proveider ID"] = from_union([from_str, from_none], self.proveider_id)
+        result["Proveider ID"] = from_union([from_str, from_none], self.provider_id)
         result["Session ID"] = from_union([lambda x: str(x), from_none], self.session_id)
         result["Session end"] = from_union([lambda x: x.isoformat(), from_none], self.session_end)
         result["Session start"] = from_union([lambda x: x.isoformat(), from_none], self.session_start)
