@@ -159,13 +159,16 @@ def calculate_kwh(supplier : spm.SupplierPrice, transaction : tm.Transaction):
         amount += kwH_consumed * supplier.kwh_price
     return amount
 
-def export_to_csv(calculated_price_dict):
+def export_result(calculated_price_dict):
     # Generating transaction price report  
     with open('result.csv','w') as csvfile:
         header = ['session_id', 'supplier_price_id', 'fee_price', 'time_price', 'total_price', 'kwh_price'] 
         wr = csv.DictWriter(csvfile, fieldnames=header)
         wr.writeheader()
         wr.writerows(calculated_price_dict)
+    
+    with open('result.json', 'w') as jsonfile:
+        json.dump(calculated_price_dict, jsonfile, indent=4)
 
 def main():
     logging.basicConfig(level=logging.INFO)
@@ -174,7 +177,7 @@ def main():
         supplier_list, transaction_list = parse_data(data)
         calculated_price_list = calculate_prices(supplier_list, transaction_list)
         calculated_price_dict = cpm.calculated_price_to_dict(calculated_price_list)
-        export_to_csv(calculated_price_dict)
+        export_result(calculated_price_dict)
 
     except Exception as e:
         logging.info("Exception")
