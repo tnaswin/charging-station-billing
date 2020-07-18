@@ -5,8 +5,8 @@ Request and fetch data from the given API and perform the given operations:
 1. Get JSON with Data
     ```json
     {
-    "supplier_prices": [   ],
-    "transactions": [    ]
+    "supplier_prices": [...],
+    "transactions": [...]
     }
     ```
 2. Parse Data
