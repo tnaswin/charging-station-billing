@@ -47,6 +47,7 @@ def get_apidata():
        Connect to the server and get the base JSON file with all information
        and return the response received.
     """
+    logging.info("get_apidata")
     config = ConfigParser() 
     config.read('config.ini')  # Read config from the file path given
     url = config.get('auth', 'endpoint')  
@@ -61,6 +62,7 @@ def get_apidata():
 
 def calculate_prices(supplier_list, transaction_list):
     """Calculate the price for the charges"""
+    logging.info("calculated_prices")
     calulated_price_list = []
     for supplier in supplier_list:
         for transaction in transaction_list:
@@ -73,6 +75,7 @@ def calculate_prices(supplier_list, transaction_list):
                                                 supplier.identifier)
                     calulated_price_list.append(price)
                     transaction_list.remove(transaction)                
+    logging.info(len(calulated_price_list))
     print(len(calulated_price_list))
 
 def calculate_kwh(supplier, transaction):
