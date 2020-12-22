@@ -30,8 +30,9 @@ password: <password>
 ### To execute the script:
 
 Install the dependencies and run the script.
+Activate your virtual environment and proceed to install.
 
 ```sh
-$ pip install requirements.txt
+$ pip install -r requirements.txt
 $ python3 generate_billing.py
 ```
